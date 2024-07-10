@@ -27,7 +27,7 @@ const PongGame = () => {
   const drawScore = (ctx, score) => {
     ctx.font = '24px Arial';
     ctx.fillStyle = '#0095DD';
-    ctx.fillText(`${score.player2} : ${score.player1}`, 280, 450);
+    ctx.fillText(`${score.player2} : ${score.player1}`, 270, 450);
   };
 
   const moveBall = (ball, paddle1, paddle2, score) => {
@@ -112,7 +112,14 @@ const PongGame = () => {
     };
   }, [ball, paddle1, paddle2, score]);
 
-  return <canvas ref={canvasRef} width="600" height="900" />;
+  return (
+    <>
+      <div className="scoreboard">
+        {score.player2} : {score.player1}
+      </div>
+      <canvas ref={canvasRef} width="600" height="900" />
+    </>
+  );
 };
 
 export default PongGame;
