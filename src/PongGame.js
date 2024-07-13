@@ -7,6 +7,7 @@ const PongGame = () => {
   const [paddle1, setPaddle1] = useState({ x: 250, y: 880, width: 100, height: 10 });
   const [paddle2, setPaddle2] = useState({ x: 250, y: 10, width: 100, height: 10 });
   const [score, setScore] = useState({ player1: 0, player2: 0 });
+  const [isPaused, setIsPaused] = useState(false);
 
   const drawBall = (ctx, ball) => {
     ctx.beginPath();
@@ -97,12 +98,14 @@ const PongGame = () => {
     canvas.addEventListener('touchmove', handleTouchMove);
 
     const interval = setInterval(() => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      setBall((prevBall) => moveBall(prevBall, paddle1, paddle2, score));
-      drawBall(ctx, ball);
-      drawPaddle(ctx, paddle1);
-      drawPaddle(ctx, paddle2);
-      drawScore(ctx, score);
+      if (!isPaused) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setBall((prevBall) => moveBall(prevBall, paddle1, paddle2, score));
+        drawBall(ctx, ball);
+        drawPaddle(ctx, paddle1);
+        drawPaddle(ctx, paddle2);
+        drawScore(ctx, score);
+      }
     }, 10);
 
     return () => {
@@ -110,9 +113,20 @@ const PongGame = () => {
       window.removeEventListener('keydown', handleKeyDown);
       canvas.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [ball, paddle1, paddle2, score]);
+  }, [ball, paddle1, paddle2, score, isPaused]);
 
-  return <canvas ref={canvasRef} width="600" height="900" />;
+  return (
+    <div className="pong-container">
+      <button onClick={() => setIsPaused(!isPaused)} className="pause-button">
+        {isPaused ? 'Resume' : 'Pause'}
+      </button>
+      <canvas ref={canvasRef} width="600" height="900" />
+      <div className="control-text top-left">(←A)</div>
+      <div className="control-text top-right">(D→)</div>
+      <div className="control-text bottom-left">(←)</div>
+      <div className="control-text bottom-right">(→)</div>
+    </div>
+  );
 };
 
 export default PongGame;
