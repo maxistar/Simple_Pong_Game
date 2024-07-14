@@ -17,11 +17,14 @@ const PongGame = () => {
     ctx.closePath();
   };
 
-  const drawPaddle = (ctx, paddle) => {
+  const drawPaddle = (ctx, paddle, playerScore) => {
     ctx.beginPath();
     ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
     ctx.fillStyle = '#0095DD';
     ctx.fill();
+    ctx.strokeStyle = playerScore >= 1000 ? 'yellow' : playerScore >= 250 ? 'purple' : playerScore >= 100 ? 'white' : 'transparent';
+    ctx.lineWidth = playerScore >= 1000 ? 6 : playerScore >= 250 ? 4 : playerScore >= 100 ? 2 : 0;
+    ctx.stroke();
     ctx.closePath();
   };
 
@@ -71,17 +74,19 @@ const PongGame = () => {
   };
 
   const handleKeyDown = (e) => {
+    // Increase the move step from 20 to 25 for 25% more speed
+    const moveStep = 25;  
     if (e.key === 'ArrowLeft') {
-      setPaddle1((prevPaddle) => ({ ...prevPaddle, x: Math.max(prevPaddle.x - 20, 0) }));
+      setPaddle1((prevPaddle) => ({ ...prevPaddle, x: Math.max(prevPaddle.x - moveStep, 0) }));
     } else if (e.key === 'ArrowRight') {
-      setPaddle1((prevPaddle) => ({ ...prevPaddle, x: Math.min(prevPaddle.x + 20, 600 - prevPaddle.width) }));
+      setPaddle1((prevPaddle) => ({ ...prevPaddle, x: Math.min(prevPaddle.x + moveStep, 600 - prevPaddle.width) }));
     } else if (e.key === 'a') {
-      setPaddle2((prevPaddle) => ({ ...prevPaddle, x: Math.max(prevPaddle.x - 20, 0) }));
+      setPaddle2((prevPaddle) => ({ ...prevPaddle, x: Math.max(prevPaddle.x - moveStep, 0) }));
     } else if (e.key === 'd') {
-      setPaddle2((prevPaddle) => ({ ...prevPaddle, x: Math.min(prevPaddle.x + 20, 600 - prevPaddle.width) }));
+      setPaddle2((prevPaddle) => ({ ...prevPaddle, x: Math.min(prevPaddle.x + moveStep, 600 - prevPaddle.width) }));
     }
   };
-
+  
   const handleTouchMove = (e) => {
     const touchX = e.touches[0].clientX;
     setPaddle1((prevPaddle) => ({
@@ -89,6 +94,7 @@ const PongGame = () => {
       x: Math.max(Math.min(touchX - canvasRef.current.offsetLeft - prevPaddle.width / 2, 600 - prevPaddle.width), 0),
     }));
   };
+  
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -102,8 +108,8 @@ const PongGame = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setBall((prevBall) => moveBall(prevBall, paddle1, paddle2, score));
         drawBall(ctx, ball);
-        drawPaddle(ctx, paddle1);
-        drawPaddle(ctx, paddle2);
+        drawPaddle(ctx, paddle1, score.player1);
+        drawPaddle(ctx, paddle2, score.player2);
         drawScore(ctx, score);
       }
     }, 10);
