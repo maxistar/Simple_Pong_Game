@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './PongGame.css';
+import WebApp from '@twa-dev/sdk'
 
 const PongGame = () => {
   const canvasRef = useRef(null);
@@ -120,6 +121,8 @@ const PongGame = () => {
       canvas.removeEventListener('touchmove', handleTouchMove);
     };
   }, [ball, paddle1, paddle2, score, isPaused]);
+
+  WebApp.showAlert("aaa")
 
   return (
     <div className="pong-container">
